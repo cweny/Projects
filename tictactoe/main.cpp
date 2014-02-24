@@ -1,3 +1,8 @@
+/*
+    Carlos Wen
+    Tic Tac Toe Game
+*/
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
