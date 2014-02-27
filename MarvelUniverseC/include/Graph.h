@@ -9,7 +9,6 @@ using namespace std;
 class Graph
 {
     public:
-        Graph();
         Graph(char*);
         void get_line(string);
         void add_line(string, string);
