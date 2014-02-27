@@ -17,10 +17,10 @@ public class GraphTest {
 
 	@Test
 	public void testGraph() throws IOException {
-		\*
+		/*
 			list.txt contains a list which represents a very simple graph
 			It is only used for testing
-		*\
+		*/
 		Graph graph = new Graph("list.txt");
 		String pathString = "";
 		
