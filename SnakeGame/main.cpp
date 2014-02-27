@@ -10,8 +10,9 @@
 #define BOARD_SIZE 12
 
 /*
-Carlos Wen
-snake game
+    Carlos Wen
+    snake game in opengl
+    Runs on windows computers
 */
 
 static int speed=100;
@@ -22,12 +23,18 @@ static bool lose = false;
 static bool fruit_eaten = false;
 static int snake_size = 1, snake_tail = 0;
 static int snake[MAX_SNAKE_SIZE][2]={{1,1}};
-
+//the data structure for the snake behaves like a queue, but it is easy to iterate through(so that the snake is rendered)
+//the data structure is basically an array
+//an index of the tail of the snake is kept. This index changes as the snake moves
+//the head of the snake would be tail+size. So both the head and tail changes everytime
+//so the snake is in different parts of the array at different moments. 
+//made it this way to attempt to make it fast
 enum ways {UP,DOWN,LEFT,RIGHT};
 static ways direction = UP;
 
 static char board [BOARD_SIZE][BOARD_SIZE];
 static int fruit[2] = {6,1};
+//function to update the window and render new images
 void move_snake(void)
 {
     int x = snake[(snake_tail+snake_size-1)%MAX_SNAKE_SIZE][0];
@@ -92,7 +99,7 @@ void move_snake(void)
                 snake_size++;
                 fruit_eaten = true;
             }
-            else //(board[x][y+1] == ' ')
+            else 
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y+1;
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
@@ -234,10 +241,10 @@ void move_snake(void)
             }
             break;
         }
-    //if (space) waitFor(1);
     Sleep(speed);
     glutPostRedisplay();
 }
+//function to draw board
 void draw_board_squares(void)
 {
     glBegin(GL_LINES);
@@ -253,6 +260,7 @@ void draw_board_squares(void)
     }
     glEnd();
 }
+//function used to draw the snake
 void draw_square(GLfloat x, GLfloat y)
 {
     glBegin(GL_LINE_STRIP);
@@ -317,6 +325,7 @@ void reshape (int w, int h)
 
 void keyboard (unsigned char key, int x, int y)
 {
+    //Small bugs with inputs due to a sleep function in the rendering function. Will fix soon
    switch (key) {
       case 's':
          if(direction!=UP)
