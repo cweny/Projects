@@ -1,6 +1,14 @@
 /*
     Carlos Wen
     Tic Tac Toe Game
+    Uses a recursive minimax algorithm to calculcate the best move. 
+    The algorithm tries to predict all the possible moves that can follow after
+    10 is given to the best move. -10 is given to the worst
+    Every time it tries to predict, it assumes the player picks the best move for him and the worst move for the computer
+    So the play by the player will be negative. While the play by the computer will be positive
+    The higher the number the closer the move(for the computer to win) is.
+    The more negative, the closer the move(for the cmputer to lose) is.
+    board is represented in an array
 */
 
 #include <iostream>
@@ -154,7 +162,7 @@ int compMove(play board[])
         if(board[k] == BLANK)
         {
             board[k] = X;
-            thisScore = minimax(board, OTURN);
+            thisScore = minimax(board, OTURN);//calculate the value of each move with minimax algorithm
             board[k] = BLANK;
             if (thisScore > bestScore)
             {
@@ -171,10 +179,12 @@ int minimax(play board[],playerTurn turn)
     int bestScore;
     int thisScore;
     int i;
-
+    // depending on whose turn it is, the best move would be the best for the player or for the computer
     if(turn == OTURN) bestScore = 999;
     else if(turn == XTURN) bestScore = -999;
-
+    // to calculate the value of every move, the easiest way is if that move leads to a win or loss
+    // most of the times this doesnt happen, the game is still ongoing
+    // so to calculate the value of the move, more claculation of future moves have to be done
     switch(check(board))
     {
     case DRAW:
@@ -185,13 +195,13 @@ int minimax(play board[],playerTurn turn)
         return -10;
     case ONGOING:
         {
-            for(i=0; i<9; i++)
+            for(i=0; i<9; i++)//check all possible future moves. So it has to go through every square in the board
             {
-                if(board[i] == BLANK && turn == OTURN)
+                if(board[i] == BLANK && turn == OTURN)//checks whose turn would the move trying to be predicted is
                 {
                     board[i] = O;
-                    thisScore = minimax(board,XTURN);
-                    board[i] = BLANK;
+                    thisScore = minimax(board,XTURN);// every minimax call tries to figure out the value of that move
+                    board[i] = BLANK;                // the move that is tried to be figured can be either a move from the player or from the computer
                 }
                 else if(board[i] == BLANK && turn == XTURN)
                 {
@@ -199,7 +209,9 @@ int minimax(play board[],playerTurn turn)
                     thisScore = minimax(board,OTURN);
                     board[i] = BLANK;
                 }
-
+                //depending on whose turn it is, it will try to get the highest or lowest value
+                //if it is the player's turn, then the most negative number is looked for
+                //if it is the computer's turn, then the most positive number is looked for
                 if(bestScore > thisScore && turn == OTURN && board[i] == BLANK)
                 {
                     bestScore = thisScore;
@@ -209,9 +221,15 @@ int minimax(play board[],playerTurn turn)
                     bestScore = thisScore;
                 }
             }
+            
+            // every time minimax is called, that predicted move is farther from the present move
+            // so its value is less and less
+            // for the player's turn, a less value means a more positive(less advantage for the player)
+            // for the computer's turn, a less value means a more negative(less advantage for the computer)
             if (bestScore<0) bestScore++;
             else if (bestScore>0) bestScore--;
-
+            
+            //return the "value" of the move
         return bestScore;
         }
     }
