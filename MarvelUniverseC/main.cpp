@@ -11,13 +11,16 @@ using namespace std;
 
 int main()
 {
+    /*
+        only used to test graph class. 
+        same specifications as the graph in java, so this is not very complex
+    */
     char filename[] = {"labeled_edges.tsv"};
 
     Graph mygraph(filename);
 
     vector<string> myvector;
     myvector = mygraph.get_path("FROST, CARMILLA", "KILLRAVEN/JONATHAN R");
-    //cout<< "done";
     for(vector<string>::iterator mylist = myvector.begin(); mylist != myvector.end(); mylist++)//iterating through characters
     {
         cout<<*mylist;
