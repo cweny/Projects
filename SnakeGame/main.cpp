@@ -8,7 +8,7 @@
 #define MAX_SNAKE_SIZE 100
 #define SQUARE_SIZE 0.4
 #define BOARD_SIZE 12
-
+#define MAX_DIRECTIONS 30
 /*
     Carlos Wen
     snake game in opengl
