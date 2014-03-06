@@ -30,7 +30,9 @@ static int snake[MAX_SNAKE_SIZE][2]={{1,1}};
 //so the snake is in different parts of the array at different moments. 
 //made it this way to attempt to make it fast
 enum ways {UP,DOWN,LEFT,RIGHT};
-static ways direction = UP;
+static ways direction[MAX_DIRECTIONS] = {UP};
+static int direction_size=1;
+static int current_direction=0;
 
 static char board [BOARD_SIZE][BOARD_SIZE];
 static int fruit[2] = {6,1};
@@ -63,7 +65,7 @@ void move_snake(void)
         }while(board[fruit[0]][fruit[1]] != ' ');
         fruit_eaten = false;
     }
-    switch(direction){
+    switch(direction[current_direction]){
         case UP:
             if(y == BOARD_SIZE-1)
             {
@@ -241,6 +243,11 @@ void move_snake(void)
             }
             break;
         }
+    if(direction_size>1)
+    {
+        direction_size--;
+        current_direction=(current_direction+1)%MAX_DIRECTIONS;
+    }
     Sleep(speed);
     glutPostRedisplay();
 }
@@ -325,33 +332,36 @@ void reshape (int w, int h)
 
 void keyboard (unsigned char key, int x, int y)
 {
-    //Small bugs with inputs due to a sleep function in the rendering function. Will fix soon
    switch (key) {
       case 's':
-         if(direction!=UP)
+         if(direction[current_direction]!=UP)
          {
-            direction = DOWN;
+            direction[(current_direction+1)%MAX_DIRECTIONS] = DOWN;
+            direction_size++;
             //move_snake();
          }
          break;
       case 'a':
-         if(direction!=RIGHT)
+         if(direction[current_direction]!=RIGHT)
          {
-            direction = LEFT;
+            direction[(current_direction+1)%MAX_DIRECTIONS] = LEFT;
+            direction_size++;
             //move_snake();
          }
          break;
       case 'd':
-         if(direction!=LEFT)
+         if(direction[current_direction]!=LEFT)
          {
-            direction = RIGHT;
+            direction[(current_direction+1)%MAX_DIRECTIONS] = RIGHT;
+            direction_size++;
             //move_snake();
          }
          break;
       case 'w':
-         if(direction!=DOWN)
+         if(direction[current_direction]!=DOWN)
          {
-            direction = UP;
+            direction[(current_direction+1)%MAX_DIRECTIONS] = UP;
+            direction_size++;
             //move_snake();
          }
          break;
