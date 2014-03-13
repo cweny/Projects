@@ -9,6 +9,7 @@
 #define SQUARE_SIZE 0.4
 #define BOARD_SIZE 12
 #define MAX_DIRECTIONS 30
+
 /*
     Carlos Wen
     snake game in opengl
@@ -27,12 +28,13 @@ static int snake[MAX_SNAKE_SIZE][2]={{1,1}};
 //the data structure is basically an array
 //an index of the tail of the snake is kept. This index changes as the snake moves
 //the head of the snake would be tail+size. So both the head and tail changes everytime
-//so the snake is in different parts of the array at different moments. 
+//so the snake is in different parts of the array at different moments.
 //made it this way to attempt to make it fast
 enum ways {UP,DOWN,LEFT,RIGHT};
 static ways direction[MAX_DIRECTIONS] = {UP};
 static int direction_size=1;
 static int current_direction=0;
+static ways last_direction = direction[current_direction];
 
 static char board [BOARD_SIZE][BOARD_SIZE];
 static int fruit[2] = {6,1};
@@ -65,7 +67,8 @@ void move_snake(void)
         }while(board[fruit[0]][fruit[1]] != ' ');
         fruit_eaten = false;
     }
-    switch(direction[current_direction]){
+    if(direction_size>0) last_direction = direction[current_direction];
+    switch(last_direction){
         case UP:
             if(y == BOARD_SIZE-1)
             {
@@ -101,7 +104,7 @@ void move_snake(void)
                 snake_size++;
                 fruit_eaten = true;
             }
-            else 
+            else
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y+1;
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
@@ -243,7 +246,7 @@ void move_snake(void)
             }
             break;
         }
-    if(direction_size>1)
+    if(direction_size>0)
     {
         direction_size--;
         current_direction=(current_direction+1)%MAX_DIRECTIONS;
@@ -334,33 +337,45 @@ void keyboard (unsigned char key, int x, int y)
 {
    switch (key) {
       case 's':
-         if(direction[current_direction]!=UP)
+         if(last_direction!=UP)
          {
-            direction[(current_direction+1)%MAX_DIRECTIONS] = DOWN;
+            if(direction_size!=0)
+                direction[(current_direction+1)%MAX_DIRECTIONS] = DOWN;
+            else
+                direction[(current_direction)%MAX_DIRECTIONS] = DOWN;
             direction_size++;
             //move_snake();
          }
          break;
       case 'a':
-         if(direction[current_direction]!=RIGHT)
+         if(last_direction!=RIGHT)
          {
-            direction[(current_direction+1)%MAX_DIRECTIONS] = LEFT;
+            if(direction_size!=0)
+                direction[(current_direction+1)%MAX_DIRECTIONS] = LEFT;
+            else
+                direction[(current_direction)%MAX_DIRECTIONS] = LEFT;
             direction_size++;
             //move_snake();
          }
          break;
       case 'd':
-         if(direction[current_direction]!=LEFT)
+         if(last_direction!=LEFT)
          {
-            direction[(current_direction+1)%MAX_DIRECTIONS] = RIGHT;
+            if(direction_size!=0)
+                direction[(current_direction+1)%MAX_DIRECTIONS] = RIGHT;
+            else
+                direction[(current_direction)%MAX_DIRECTIONS] = RIGHT;
             direction_size++;
             //move_snake();
          }
          break;
       case 'w':
-         if(direction[current_direction]!=DOWN)
+         if(last_direction!=DOWN)
          {
-            direction[(current_direction+1)%MAX_DIRECTIONS] = UP;
+            if(direction_size!=0)
+                direction[(current_direction+1)%MAX_DIRECTIONS] = UP;
+            else
+                direction[(current_direction)%MAX_DIRECTIONS] = UP;
             direction_size++;
             //move_snake();
          }
@@ -435,10 +450,3 @@ int main(int argc, char** argv)
     glutMainLoop();
    return 0;
 }
-
-
-
-
-
-
-
