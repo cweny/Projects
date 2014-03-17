@@ -36,7 +36,10 @@ int main(void)
     playGame(board);
     return 0;
 }
-
+/** 
+ * This function contains the game that must run in an infinite loop.
+ * Parameters: the booad representation
+*/
 void playGame(play board[])
 {
     int gamesPlayed = 0;
@@ -91,11 +94,13 @@ void playGame(play board[])
     }
 }
 
+/**
+ * this function checks wether there is a winner or not
+ * param: the board to check
+ * return: XWON if X player won, OWON if O player won, DRAW if the game ended with no winner, ONGOING if it is still ongoing
+ */
 gameState check(play board[])
 {
-    /*0 1 2
-      3 4 5
-      6 7 8*/
     int combination[8][3] = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
 
     for(int k=0; k<8; k++)
@@ -112,6 +117,10 @@ gameState check(play board[])
     return DRAW;
 }
 
+/**
+ * This function prints the board and all the moves done
+ * Param: the board representation
+ */
 void printBoard(play board[])
 {
     char squares[9];
@@ -129,6 +138,10 @@ void printBoard(play board[])
     cout << "\n\t\t\t\t" << squares[6] << " | " << squares[7] << " | " << squares[8] << "\n\n";
 }
 
+/**
+ * This function gets the next player's play
+ * Param: the current board representation, and the player's turn
+ */ 
 void getPlay(play board[], playerTurn turn)
 {
     if (turn == XTURN)
@@ -151,6 +164,11 @@ void getPlay(play board[], playerTurn turn)
     }
 }
 
+/**
+ * This function makes a move
+ * Param: the representation of the board
+ * return: the best possible move
+ */
 int compMove(play board[])
 {
     int bestMove;
@@ -173,7 +191,10 @@ int compMove(play board[])
     }
     return bestMove;
 }
-
+/**
+ * this function implements the minimax algorithm
+ * Param: the board representation and the next player's turn
+ */ 
 int minimax(play board[],playerTurn turn)
 {
     int bestScore;
