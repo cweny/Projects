@@ -38,7 +38,11 @@ static ways last_direction = direction[current_direction];
 
 static char board [BOARD_SIZE][BOARD_SIZE];
 static int fruit[2] = {6,1};
-//function to update the window and render new images
+
+/**
+ * function to update the window and modifies the board. It also updates the snake's position
+ * and checks all the flags. This function is passed to glutIdleFunc
+ */
 void move_snake(void)
 {
     int x = snake[(snake_tail+snake_size-1)%MAX_SNAKE_SIZE][0];
@@ -294,11 +298,18 @@ void draw_square(GLfloat x, GLfloat y)
 
 
 }
+/**
+ * This function initializes opengl
+ */ 
 void init(void)
 {
     glClearColor (0.0, 0.0, 0.0, 0.0);
     glMatrixMode(GL_MODELVIEW);
 }
+
+/**
+ * This function is passed to glutDisplayFunc
+ */ 
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -322,6 +333,9 @@ void display(void)
     glutSwapBuffers();
 }
 
+/**
+ * This funcion takes care of the reshape for the current window. It is passed to glutReshapeFunc
+ */ 
 void reshape (int w, int h)
 {
     glViewport (0, 0, (GLsizei) w, (GLsizei) h);
@@ -333,6 +347,9 @@ void reshape (int w, int h)
     glTranslatef (0.0, 0.0, -5.0);
 }
 
+/**
+ * This function takes care of all the inputs. It is passed to glutKeyboardFunc
+ */ 
 void keyboard (unsigned char key, int x, int y)
 {
    switch (key) {
