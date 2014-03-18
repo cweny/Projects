@@ -40,7 +40,7 @@ static char board [BOARD_SIZE][BOARD_SIZE];
 static int fruit[2] = {6,1};
 
 /**
- * function to update the window and modifies the board. It also updates the snake's position
+ * function to update the window and modify the board. It also updates the snake's position
  * and checks all the flags. This function is passed to glutIdleFunc
  */
 void move_snake(void)
@@ -76,11 +76,8 @@ void move_snake(void)
         case UP:
             if(y == BOARD_SIZE-1)
             {
-                if(board[x][0]=='o')
-                {
-                    lose = true;
-                }
-                else if( x==fruit[0] && fruit[1]==0)
+
+                if( x==fruit[0] && fruit[1]==0)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=0;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
@@ -93,12 +90,12 @@ void move_snake(void)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=0;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
-                    board[x][0]='o';
                     board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                    if(board[x][0]=='o'){lose = true;}
+                    else {board[x][0]='o';}
                     snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
                 }
             }
-            else if (board[x][y+1] == 'o'){lose = true;}
             else if (x==fruit[0] && fruit[1]==y+1)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y+1;
@@ -112,19 +109,17 @@ void move_snake(void)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y+1;
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
-                board[x][y+1]='o';
                 board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                if (board[x][y+1] == 'o'){lose = true;}
+                else {board[x][y+1]='o';}
                 snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
+
             }
             break;
         case DOWN:
             if(y == 0)
             {
-                if(board[x][BOARD_SIZE-1]=='o')
-                {
-                    lose = true;
-                }
-                else if( x==fruit[0] && fruit[1]==BOARD_SIZE-1)
+                if( x==fruit[0] && fruit[1]==BOARD_SIZE-1)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=BOARD_SIZE-1;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
@@ -137,12 +132,12 @@ void move_snake(void)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=BOARD_SIZE-1;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
-                    board[x][BOARD_SIZE-1]='o';
                     board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                    if(board[x][BOARD_SIZE-1]=='o'){lose = true;}
+                    else {board[x][BOARD_SIZE-1]='o';}
                     snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
                 }
             }
-            else if (board[x][y-1] == 'o'){lose = true;}
             else if (x==fruit[0] && fruit[1]==y-1)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y-1;
@@ -156,19 +151,16 @@ void move_snake(void)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y-1;
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x;
-                board[x][y-1]='o';
                 board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                if (board[x][y-1] == 'o'){lose = true;}
+                else {board[x][y-1]='o';}
                 snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
             }
             break;
         case LEFT:
             if(x == 0)
             {
-                if(board[BOARD_SIZE-1][y]=='o')
-                {
-                    lose = true;
-                }
-                else if( BOARD_SIZE-1==fruit[0] && fruit[1]==y)
+                if( BOARD_SIZE-1==fruit[0] && fruit[1]==y)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=BOARD_SIZE-1;
@@ -181,12 +173,12 @@ void move_snake(void)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=BOARD_SIZE-1;
-                    board[BOARD_SIZE-1][y]='o';
                     board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                    if(board[BOARD_SIZE-1][y]=='o'){lose = true;}
+                    else {board[BOARD_SIZE-1][y]='o';}
                     snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
                 }
             }
-            else if (board[x-1][y] == 'o'){lose = true;}
             else if (x-1==fruit[0] && fruit[1]==y)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
@@ -200,23 +192,19 @@ void move_snake(void)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x-1;
-                board[x-1][y]='o';
                 board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                if (board[x-1][y] == 'o'){lose = true;}
+                else {board[x-1][y]='o';}
                 snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
             }
             break;
         case RIGHT:
             if(x == BOARD_SIZE-1)
             {
-                if(board[0][y]=='o')
-                {
-                    lose = true;
-                }
-                else if( 0==fruit[0] && fruit[1]==y)
+                if( 0==fruit[0] && fruit[1]==y)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=0;
-
                     board[0][y]='o';
                     snake_size++;
                     fruit_eaten = true;
@@ -225,12 +213,12 @@ void move_snake(void)
                 {
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
                     snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=0;
-                    board[0][y]='o';
                     board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                    if(board[0][y]=='o'){lose = true;}
+                    else {board[0][y]='o';}
                     snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
                 }
             }
-            else if (board[x+1][y] == 'o'){lose = true;}
             else if (x+1==fruit[0] && fruit[1]==y)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
@@ -244,8 +232,9 @@ void move_snake(void)
             {
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][1]=y;
                 snake[(snake_tail+snake_size)%MAX_SNAKE_SIZE][0]=x+1;
-                board[x+1][y]='o';
                 board[ snake[snake_tail][0] ][ snake[snake_tail][1] ]=' ';
+                if (board[x+1][y] == 'o'){lose = true;}
+                else {board[x+1][y]='o';}
                 snake_tail=(snake_tail+1)%MAX_SNAKE_SIZE;
             }
             break;
