@@ -31,6 +31,8 @@ static int snake[MAX_SNAKE_SIZE][2]={{1,1}};
 //so the snake is in different parts of the array at different moments.
 //made it this way to attempt to make it fast
 enum ways {UP,DOWN,LEFT,RIGHT};
+//the direcction array contain the user inputs
+//it acts like a buffer for the input
 static ways direction[MAX_DIRECTIONS] = {UP};
 static int direction_size=1;
 static int current_direction=0;
@@ -247,7 +249,9 @@ void move_snake(void)
     Sleep(speed);
     glutPostRedisplay();
 }
-//function to draw board
+/**
+ * function used to draw the board
+ */
 void draw_board_squares(void)
 {
     glBegin(GL_LINES);
@@ -263,7 +267,10 @@ void draw_board_squares(void)
     }
     glEnd();
 }
-//function used to draw the snake
+/**
+ * function used to draw cubes. This function is called to draw the full snake
+ * @param: the position for the cubes to be drawn
+*/
 void draw_square(GLfloat x, GLfloat y)
 {
     glBegin(GL_LINE_STRIP);
