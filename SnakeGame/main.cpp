@@ -24,15 +24,11 @@ static bool lose = false;
 static bool fruit_eaten = false;
 static int snake_size = 1, snake_tail = 0;
 static int snake[MAX_SNAKE_SIZE][2]={{1,1}};
-//the data structure for the snake behaves like a queue, but it is easy to iterate through(so that the snake is rendered)
-//the data structure is basically an array
-//an index of the tail of the snake is kept. This index changes as the snake moves
-//the head of the snake would be tail+size. So both the head and tail changes everytime
-//so the snake is in different parts of the array at different moments.
+//the data structure for the snake behaves like a queue, implemented as a circular array
 //made it this way to attempt to make it fast
 enum ways {UP,DOWN,LEFT,RIGHT};
-//the direcction array contain the user inputs
-//it acts like a buffer for the input
+//the direction array contains the user inputs
+//it acts like a buffer for the input. also implemented as a circular array
 static ways direction[MAX_DIRECTIONS] = {UP};
 static int direction_size=1;
 static int current_direction=0;
