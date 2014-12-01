@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TEST</title>
+        <title>Connect4</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
@@ -89,12 +89,14 @@ and open the template in the editor.
 		</div>
         <script>
 		$(document).ready(function(){
+			var columnSize = 8;
+			var rowSize = 8;
 			var newBoard = function(){
 				var newB = [];
 				
-				for(var i=0; i<8; i++){
+				for(var i=0; i<rowSize; i++){
 					var temp = [];
-					for(var n=0; n<8; n++){
+					for(var n=0; n<columnSize; n++){
 						temp[n] = 0;
 					}
 					newB[i]=temp;
@@ -134,12 +136,12 @@ and open the template in the editor.
 				return 0;
 			};			
 			//Initialize game
-			for(var i=0; i<8; i++) {
+			for(var i=0; i<rowSize; i++) {
 				var row = document.createElement("TR");
 				row.className = "row";
 				row.id = "row"+i;
 				document.getElementById("board").appendChild(row);
-				for(var k=0; k<8; k++) {
+				for(var k=0; k<columnSize; k++) {
 					var slot = document.createElement("TD");
 					slot.id = k.toString();
 					slot.className = "slot";
@@ -168,7 +170,7 @@ and open the template in the editor.
 			});
 			//Make a play
 			var drop = function(element){
-				var row = 7;
+				var row = rowSize-1;
 				while(board[row][element.id] != 0) {
 					row--;
 					if(row == -1) {
@@ -221,7 +223,7 @@ and open the template in the editor.
 				compMove();
 			});
 			$(".slot").hover(function(){
-				var row = 7;
+				var row = rowSize-1;
 				while(board[row][this.id] != 0) {
 					row--;
 					if(row == -1) {
@@ -235,7 +237,7 @@ and open the template in the editor.
 				}
 			  },
 			  function(){
-				var row = 7;
+				var row = rowSize-1;
 				while(board[row][this.id] != 0) {
 					row--;
 					if(row == -1) {
