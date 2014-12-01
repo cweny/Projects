@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TEST</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            #page{
+                width:1250px;
+                height:900px;
+                margin-left: auto;
+				margin-right: auto;
+                margin-top:10px;
+                padding-top:10px;
+                padding-bottom:20px;
+                box-shadow: 0px 0px 20px 3px #d3d3d3;
+                border-radius:4px;
+                background-color:#d3d3d3;
+				text-align:center;
+				
+            }
+			#comments{
+                height:100px;
+            }
+            body {
+                    height:1300px;
+                    font-size:14px;
+                    color:#404040;
+                    background-color:#f1f1f1;
+                    margin:0px;}
+            h1 {
+                color: maroon;
+                margin-left: 40px;
+            } 
+            p {
+                margin-left: 45px
+            }
+            #board {
+                margin: 0 auto;
+				margin-left: auto;
+				margin-right: auto;
+				margin-top: 10px;
+				margin-bottom: 10px;
+                border-spacing: 5px;
+            }
+            .slot{
+                    border-radius: 70px;
+                    border: 2px solid #F0314C;
+                    width: 70px;
+                    height: 70px;
+					background-color:#f1f1f1;
+            }
+			#restart{
+					height:120x;
+					width: 170px;
+					margin:0 auto;
+					margin-right:10px;
+			}
+			#title{
+					font-size: 40px;
+					border:2px;
+					margin:2px;
+			}
+			#player{
+					margin:2px;
+					border:2px;
+			}
+			
+        </style>
+    </head>
+    <body>
+        <div id='page'>
+			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+			<div id='comments'>
+				<p id='title'>Connect4
+				</p>
+				<p id='player'>
+				</p>
+			</div>
+			<table id="board">
+			</table>
+			<button id="restart">Restart</button>
+			<button id="show">Show</button>
+		</div>
+        <script>
+		$(document).ready(function(){
+			var newBoard = function(){
+				var newB = [];
+				
+				for(var i=0; i<8; i++){
+					var temp = [];
+					for(var n=0; n<8; n++){
+						temp[n] = 0;
+					}
+					newB[i]=temp;
+				}
+				return newB;
+			};
+			var board = newBoard();
+			var setRed = function(){
+				this.style.backgroundColor = "red";
+			};
+			var setBlue = function(){
+				this.style.backgroundColor = "blue";
+			};
+			var setWhite = function(){
+				this.style.backgroundColor = "white";
+			};
+			var redTurn = true;
+			var checkWin = function(){
+				for(var row = 0; row<board.length; row++){
+					for(var col = 0; col<board[0].length; col++){
+						var player = board[row][col];
+						if(player == 0){
+							continue;
+						}
+						if (row+3 < board.length && board[row+1][col] == player && board[row+2][col] == player && board[row+3][col] == player) 
+							return player;
+						if (col+3 < board[0].length && board[row][col+1] == player && board[row][col+2] == player && board[row][col+3] == player) 
+							return player;
+						if ((row+3 < board.length && col+3 < board[0].length)
+							&& board[row+1][col+1] == player && board[row+2][col+2] == player && board[row+3][col+3] == player) 
+							return player;
+						if ((row-3 > 0 && col+3 < board[0].length)
+							&& board[row-1][col+1] == player && board[row-2][col+2] == player && board[row-3][col+3] == player) 
+							return player;
+					}
+				}
+				return 0;
+			};			
+			//Initialize game
+			for(var i=0; i<8; i++) {
+				var row = document.createElement("TR");
+				row.className = "row";
+				row.id = "row"+i;
+				document.getElementById("board").appendChild(row);
+				for(var k=0; k<8; k++) {
+					var slot = document.createElement("TD");
+					slot.id = k.toString();
+					slot.className = "slot";
+					slot.style.backgroundColor = "white";
+					$(".row").last().append(slot);
+				}
+			}
+			//$('#show').hide();
+			//Restart Game
+			$("#restart").click(function(){
+				board = newBoard();
+				$('.slot').css("background-color","white")
+				redTurn = true;
+				var rows = $(".row");
+				for (var i=0; i<rows.length; i++){
+					var slots = rows[i].childNodes;
+					for(var k=0; k<slots.length; k++){
+						slots[k].onmouseout = setWhite;
+					}
+				}
+				$('#board').show();
+				$('#player').text("Player Red Turn");
+			});
+			$("#show").click(function(){
+				$('#board').show();
+			});
+			//Make a play
+			var drop = function(element){
+				var row = 7;
+				while(board[row][element.id] != 0) {
+					row--;
+					if(row == -1) {
+						break;
+					}
+				}
+				if(row!=-1) {
+					if(redTurn){
+						board[row][element.id]=1;
+						$('#player').text("Player Blue Turn");
+					}else{
+						board[row][element.id]=2;
+						$('#player').text("Player Red Turn");
+					}
+					var slots = $(".row")[row].childNodes;
+					var x = slots[element.id];
+					if(redTurn){
+						x.style.backgroundColor = "red";
+						x.onmouseout = setRed;
+					}else{
+						x.style.backgroundColor = "blue";
+						x.onmouseout = setBlue;
+					}
+					
+					redTurn = !redTurn
+				}
+				if(row>0) {
+					row--;
+					var slots = $(".row")[row].childNodes;
+					var x = slots[element.id];
+					x.style.backgroundColor = "pink";
+				}
+			};
+			//AI
+			var compMove = function(){
+				
+				
+			};
+			//UI
+			$('.slot').click(function(){
+				drop(this)
+				var winner = checkWin();
+				if(winner!=0){
+					$('#board').hide();
+					if(winner == 1)
+						$('#player').text("Player Red Won");
+					else if(winner == 2)
+						$('#player').text("Player Blue Won");
+				}
+				compMove();
+			});
+			$(".slot").hover(function(){
+				var row = 7;
+				while(board[row][this.id] != 0) {
+					row--;
+					if(row == -1) {
+						break;
+					}
+				}
+				if(row!=-1) {
+					var slots = $(".row")[row].childNodes;
+					var x = slots[this.id];
+					x.style.backgroundColor = "pink";
+				}
+			  },
+			  function(){
+				var row = 7;
+				while(board[row][this.id] != 0) {
+					row--;
+					if(row == -1) {
+						break;
+					}
+				}
+				if(row!=-1) {
+					var slots = $(".row")[row].childNodes;
+					var x = slots[this.id];
+					x.style.backgroundColor = "white";
+				}
+			});
+		});
+        </script>
+	</body>
+</html>
