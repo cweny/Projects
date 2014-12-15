@@ -280,10 +280,10 @@
 						if(lines.three[0]>0 &&lines.three[1]>0) {
 							score += 800;
 						} else {
-							score += 650;
+							score += 250;
 						}
 					} else {
-						score += 400;
+						score += 200;
 					}
 				}
 				for(var n in lines.two) {
@@ -326,17 +326,6 @@
 					} else {
 						continue;
 					}
-					/*if(checkWin()==player){
-						undoColumn(i);
-						var value = 10000;
-						if(value >= beta) {
-						return beta;
-						}
-						if(value>alpha) {
-							thisAlpha = val;
-						}
-						continue;
-					}*/ 
 					var val = -negamax(depth-1, -beta, -thisAlpha, opponent);
 					undoColumn(i);
 					if(val >= beta) {
@@ -345,7 +334,6 @@
 					if(val>alpha) {
 						thisAlpha = val;
 					}
-					//console.log(spaces+"player:" + player + "   depth:" + 1 +"   column:" +i+ "value:"  +val);
 				}
 				return thisAlpha;
 			};
@@ -379,7 +367,6 @@
 						best = val;
 						bestCol = i;
 					}
-					//console.log("PICKMOVE -- player:"+player+" column:"+i+"\tdepth:"+2+"\t   value:"+val);
 				}
 				return bestCol;
 			};
@@ -413,7 +400,6 @@
 						else if(winner === 2)
 							$('#player').text("Player Blue Won");
 					}
-				//console.log(board);
 				}
 			});
 			$(".slot").hover(function(){
