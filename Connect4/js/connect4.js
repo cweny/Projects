@@ -1,10 +1,28 @@
-$(document).ready(function(){
+		$(document).ready(function(){
 			var MAX_DEPTH = 8;
 			$("#show").click(function(){
 				$('#board').show();
 			});
 			var columnSize = 7;
 			var rowSize = 6;
+			var sCols = function() {
+				var shuffled = [];
+				var start = Math.floor(columnSize/2);
+				var t=1; 
+				shuffled.push(start);
+				while (t+start<columnSize || start-t>=0) {
+					if(start-t>=0) {
+						shuffled.push(start-t);
+					}
+					if(start+t<columnSize) {
+						shuffled.push(start+t);
+					}
+					t++;
+				}
+				return shuffled;
+			};
+			var shuffleCols = sCols();
+			console.log(shuffleCols);
 			var newBoard = function(){
 				var newB = [];
 				
@@ -17,7 +35,95 @@ $(document).ready(function(){
 				}
 				return newB;
 			};
+			var getWl = function() {
+				var wl = [];
+				//-
+				for(var r=0; r<rowSize; r++) {
+					for(var c=0; c<columnSize-3;c++) {
+						wl.push(
+							[{row:r, col:c},
+							{row:r, col:c+1},
+							{row:r, col:c+2},
+							{row:r, col:c+3}]
+						);
+					}
+				}
+				//|
+				for(var c=0; c<columnSize; c++) {
+					for(var r=0; r<rowSize-3;r++) {
+						wl.push(
+							[{row:r, col:c},
+							{row:r+1, col:c},
+							{row:r+2, col:c},
+							{row:r+3, col:c}]
+						);
+					}
+				}
+				// /
+				for(var r=0; r<rowSize-3; r++) {
+					for(var c=0; c<columnSize-3;c++) {
+						wl.push(
+							[{row:r, col:c},
+							{row:r+1, col:c+1},
+							{row:r+2, col:c+2},
+							{row:r+3, col:c+3}]
+						);
+					}
+				}
+				// \
+
+				for(var r=0; r<rowSize-3; r++) {
+					for(var c=3; c<columnSize;c++) {
+						wl.push(
+							[{row:r, col:c},
+							{row:r+1, col:c-1},
+							{row:r+2, col:c-2},
+							{row:r+3, col:c-3}]
+						);
+					}
+				}
+				return wl;
+			};
+			var winningLines = getWl();
 			var board = newBoard();
+			var analyzeBoard = function(player) {
+				var combs = {four:[],
+							three:[],
+							two:[],
+							one:[]};
+				var opponent = 0;
+				if(player == 2) {
+					opponent = 1;
+				} else if(player == 1) {
+					opponent = 2;
+				}
+				for(var i in winningLines) {
+					var matches = 0;
+					for(var k in winningLines[i]) {
+						if(board[winningLines[i][k].row][winningLines[i][k].col] == player) {
+							matches++;
+						} else if(board[winningLines[i][k].row][winningLines[i][k].col] == opponent) {
+							matches = 0;
+							break;
+						}
+					}
+					switch(matches) {
+						case 4:
+							combs.four.push(winningLines[i]);
+							break;
+						case 3:
+							combs.three.push(winningLines[i]);
+							break;
+						case 2:
+							combs.three.push(winningLines[i]);
+							break;
+						case 1:
+							combs.three.push(winningLines[i]);
+							break;
+					}
+				}
+				return combs;
+			};
 			var droppableColumn = function(col) {
 				var row = rowSize-1;
 				while(board[row][col] != 0) {
@@ -156,7 +262,7 @@ $(document).ready(function(){
 				}
 				var winner = checkWin();
 				
-				if(winner==player){
+				if(winner == player){
 					return 10000-(MAX_DEPTH-depth);
 				} else if(winner ==opponent) {
 					return -10000+(MAX_DEPTH-depth);
@@ -166,8 +272,10 @@ $(document).ready(function(){
 					return evaluate(player);
 				}
 				var thisAlpha = alpha;
-				
-				for(var i=0; i<columnSize; i++) {
+				var i;
+				var m;
+				for(m in shuffleCols) {
+					i=shuffleCols[m];
 					var row = droppableColumn(i);
 					if(row >= 0) {
 						board[row][i] = player;
@@ -261,7 +369,7 @@ $(document).ready(function(){
 						else if(winner == 2)
 							$('#player').text("Player Blue Won");
 					}
-					//console.log(board);
+				console.log(board);
 				}
 			});
 			$(".slot").hover(function(){
