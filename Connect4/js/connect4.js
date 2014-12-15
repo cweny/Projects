@@ -92,17 +92,17 @@
 							two:[],
 							one:[]};
 				var opponent = 0;
-				if(player == 2) {
+				if(player === 2) {
 					opponent = 1;
-				} else if(player == 1) {
+				} else if(player === 1) {
 					opponent = 2;
 				}
 				for(var i in winningLines) {
 					var matches = 0;
 					for(var k in winningLines[i]) {
-						if(board[winningLines[i][k].row][winningLines[i][k].col] == player) {
+						if(board[winningLines[i][k].row][winningLines[i][k].col] === player) {
 							matches++;
-						} else if(board[winningLines[i][k].row][winningLines[i][k].col] == opponent) {
+						} else if(board[winningLines[i][k].row][winningLines[i][k].col] === opponent) {
 							matches = 0;
 							break;
 						}
@@ -126,9 +126,9 @@
 			};
 			var droppableColumn = function(col) {
 				var row = rowSize-1;
-				while(board[row][col] != 0) {
+				while(board[row][col] !== 0) {
 					row--;
-					if(row == -1) {
+					if(row === -1) {
 						return row;
 					}
 				}
@@ -136,9 +136,9 @@
 			};
 			var undoColumn = function(col) {
 				var row = 0;
-				while(board[row][col] == 0) {
+				while(board[row][col] === 0) {
 					row++;
-					if(row == rowSize) {
+					if(row === rowSize) {
 						console.log("error");
 						return;
 					}
@@ -160,18 +160,18 @@
 				for(var row = 0; row<board.length; row++){
 					for(var col = 0; col<board[0].length; col++){
 						var player = board[row][col];
-						if(player == 0){
+						if(player === 0){
 							continue;
 						}
-						if (row+3 < board.length && board[row+1][col] == player && board[row+2][col] == player && board[row+3][col] == player) 
+						if (row+3 < board.length && board[row+1][col] === player && board[row+2][col] === player && board[row+3][col] === player) 
 							return player;
-						if (col+3 < board[0].length && board[row][col+1] == player && board[row][col+2] == player && board[row][col+3] == player) 
+						if (col+3 < board[0].length && board[row][col+1] === player && board[row][col+2] === player && board[row][col+3] === player) 
 							return player;
 						if ((row+3 < board.length && col+3 < board[0].length)
-							&& board[row+1][col+1] == player && board[row+2][col+2] == player && board[row+3][col+3] == player) 
+							&& board[row+1][col+1] === player && board[row+2][col+2] === player && board[row+3][col+3] === player) 
 							return player;
 						if ((row-3 > 0 && col+3 < board[0].length)
-							&& board[row-1][col+1] == player && board[row-2][col+2] == player && board[row-3][col+3] == player) 
+							&& board[row-1][col+1] === player && board[row-2][col+2] === player && board[row-3][col+3] === player) 
 							return player;
 					}
 				}
@@ -195,7 +195,7 @@
 			//Restart Game
 			$("#restart").click(function(){
 				board = newBoard();
-				$('.slot').css("background-color","white")
+				$('.slot').css("background-color","white");
 				redTurn = true;
 				var rows = $(".row");
 				for (var i=0; i<rows.length; i++){
@@ -210,13 +210,13 @@
 			//Make a play
 			var drop = function(element, player){
 				var row = rowSize-1;
-				while(board[row][element.id] != 0) {
+				while(board[row][element.id] !== 0) {
 					row--;
-					if(row == -1) {
+					if(row === -1) {
 						break;
 					}
 				}
-				if(row!=-1) {
+				if(row !== -1) {
 					if(redTurn){
 						board[row][element.id]=1;
 						$('#player').text("Player Blue Turn");
@@ -234,15 +234,15 @@
 						x.onmouseout = setBlue;
 					}
 					
-					redTurn = !redTurn
+					redTurn = !redTurn;
 				}
-				if(row>0 && player==1) {
+				if(row>0 && player===1) {
 					row--;
 					var slots = $(".row")[row].childNodes;
 					var x = slots[element.id];
 					x.style.backgroundColor = "pink";
 				}
-				if(row!=-1) {
+				if(row!==-1) {
 					return true;
 				} else {
 					return false;
@@ -255,20 +255,20 @@
 			var negamax = function(depth, alpha, beta, player) {
 				
 				var opponent = 0;
-				if(player == 2) {
+				if(player === 2) {
 					opponent = 1;
-				} else if(player == 1) {
+				} else if(player === 1) {
 					opponent = 2;
 				}
 				var winner = checkWin();
 				
-				if(winner == player){
+				if(winner === player){
 					return 10000-(MAX_DEPTH-depth);
-				} else if(winner ==opponent) {
+				} else if(winner ===opponent) {
 					return -10000+(MAX_DEPTH-depth);
 				}
 				
-				if(depth == 0) {
+				if(depth === 0) {
 					return evaluate(player);
 				}
 				var thisAlpha = alpha;
@@ -310,9 +310,9 @@
 				var bestCol = 0;
 				var opponent = 0;
 				
-				if(player == 2) {
+				if(player === 2) {
 					opponent = 1;
-				} else if(player == 1) {
+				} else if(player === 1) {
 					opponent = 2;
 				}
 				
@@ -321,7 +321,7 @@
 					if(row >= 0) {
 						board[row][i] = player;
 					} else {
-						if(bestCol==i){
+						if(bestCol===i){
 							bestCol++;
 						}
 						continue;
@@ -337,7 +337,7 @@
 					}
 					console.log("PICKMOVE -- player:"+player+" column:"+i+"\tdepth:"+2+"\t   value:"+val);
 				}
-				return bestCol
+				return bestCol;
 			};
 			var compMove = function(){
 				var col = pickMove(2);
@@ -350,23 +350,23 @@
 			$('.slot').click(function(){
 				if(drop(this,1)) {
 					var winner = checkWin();
-					if(winner!=0){
+					if(winner!==0){
 						$('#board').hide();
-						if(winner == 1){
+						if(winner === 1){
 							$('#player').text("Player Red Won");
 							return;
-						} else if(winner == 2){
+						} else if(winner === 2){
 							$('#player').text("Player Blue Won");
 							return;
 						}
 					}
 					compMove();
 					winner = checkWin();
-					if(winner!=0){
+					if(winner!==0){
 						$('#board').hide();
-						if(winner == 1)
+						if(winner === 1)
 							$('#player').text("Player Red Won");
-						else if(winner == 2)
+						else if(winner === 2)
 							$('#player').text("Player Blue Won");
 					}
 				console.log(board);
@@ -375,13 +375,13 @@
 			$(".slot").hover(function(){
 				$(this).css('cursor','pointer');
 				var row = rowSize-1;
-				while(board[row][this.id] != 0) {
+				while(board[row][this.id] !== 0) {
 					row--;
-					if(row == -1) {
+					if(row === -1) {
 						break;
 					}
 				}
-				if(row!=-1) {
+				if(row!==-1) {
 					var slots = $(".row")[row].childNodes;
 					var x = slots[this.id];
 					x.style.backgroundColor = "pink";
@@ -389,13 +389,13 @@
 			  },
 			  function(){
 				var row = rowSize-1;
-				while(board[row][this.id] != 0) {
+				while(board[row][this.id] !== 0) {
 					row--;
-					if(row == -1) {
+					if(row === -1) {
 						break;
 					}
 				}
-				if(row!=-1) {
+				if(row!==-1) {
 					var slots = $(".row")[row].childNodes;
 					var x = slots[this.id];
 					x.style.backgroundColor = "white";
