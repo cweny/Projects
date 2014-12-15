@@ -1,14 +1,14 @@
 		$(document).ready(function(){
-			var MAX_DEPTH = 4;
 			$("#show").click(function(){
 				$('#board').show();
 			});
 			var columnSize = 7;
 			var rowSize = 6;
-			var sCols = function() {
+			var lastPlay = Math.floor(columnSize/2);
+			var sCols = function(play) {
 				var shuffled = [];
-				var start = Math.floor(columnSize/2);
 				var t=1; 
+				var start = parseInt(play);
 				shuffled.push(start);
 				while (t+start<columnSize || start-t>=0) {
 					if(start-t>=0) {
@@ -21,7 +21,8 @@
 				}
 				return shuffled;
 			};
-			var shuffleCols = sCols();
+			var MAX_DEPTH = 5;
+			var shuffleCols = sCols(lastPlay);
 			var newBoard = function(){
 				var newB = [];
 				
@@ -327,44 +328,50 @@
 						continue;
 					}
 					var val = -negamax(depth-1, -beta, -thisAlpha, opponent);
-					undoColumn(i);
+					board[row][i] = 0;
 					if(val >= beta) {
 						return beta;
 					}
-					if(val>alpha) {
+					if(val>thisAlpha) {
 						thisAlpha = val;
 					}
 				}
 				return thisAlpha;
 			};
 			var pickMove = function(player){
-				var best = -10000;
 				var bestCol = 0;
 				var opponent = 0;
+				var alpha = -10000;
+				var beta = 10000;
 				
 				if(player === 2) {
 					opponent = 1;
 				} else if(player === 1) {
 					opponent = 2;
 				}
-				
-				for(var i=0; i<columnSize; i++) {
+				var i;
+				var m;
+				for(m in shuffleCols) {
+					i=shuffleCols[m];
 					var row = droppableColumn(i);
 					if(row >= 0) {
 						board[row][i] = player;
 					} else {
 						if(bestCol===i){
-							bestCol++;
+							bestCol=shuffleCols[m+1];
 						}
 						continue;
 					}
 					
-					var val = -negamax(MAX_DEPTH, -10000, 10000, opponent);
+					var val = -negamax(MAX_DEPTH, -beta, -alpha, opponent);
 					
-					undoColumn(i);
+					board[row][i] = 0;
 					
-					if(val > best) {
-						best = val;
+					if(val >= beta) {
+						return i;
+					}
+					if(val>alpha) {
+						alpha = val;
 						bestCol = i;
 					}
 				}
@@ -380,6 +387,7 @@
 			//UI
 			$('.slot').click(function(){
 				if(drop(this,1)) {
+					shuffleCols = sCols(lastPlay);
 					var winner = checkWin();
 					if(winner!==0){
 						$('#board').hide();
