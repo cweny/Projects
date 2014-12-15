@@ -1,9 +1,7 @@
 $(document).ready(function(){
-			$("#droppable").click(function(){
-				$("#dropable").text(droppableColumn(5));
-			});
-			$("#undrop").click(function(){
-				$("#undo").text(undoColumn(5));
+			var MAX_DEPTH = 8;
+			$("#show").click(function(){
+				$('#board').show();
 			});
 			var columnSize = 7;
 			var rowSize = 6;
@@ -103,9 +101,6 @@ $(document).ready(function(){
 				$('#board').show();
 				$('#player').text("Player Red Turn");
 			});
-			$("#show").click(function(){
-				$('#board').show();
-			});
 			//Make a play
 			var drop = function(element, player){
 				var row = rowSize-1;
@@ -162,9 +157,9 @@ $(document).ready(function(){
 				var winner = checkWin();
 				
 				if(winner==player){
-					return 10000-depth;
+					return 10000-(MAX_DEPTH-depth);
 				} else if(winner ==opponent) {
-					return -10000+depth;
+					return -10000+(MAX_DEPTH-depth);
 				}
 				
 				if(depth == 0) {
@@ -179,7 +174,7 @@ $(document).ready(function(){
 					} else {
 						continue;
 					}
-					if(checkWin()==player){
+					/*if(checkWin()==player){
 						undoColumn(i);
 						var value = 10000;
 						if(value >= beta) {
@@ -189,7 +184,7 @@ $(document).ready(function(){
 							thisAlpha = val;
 						}
 						continue;
-					} 
+					}*/ 
 					var val = -negamax(depth-1, -beta, -thisAlpha, opponent);
 					undoColumn(i);
 					if(val >= beta) {
@@ -224,7 +219,7 @@ $(document).ready(function(){
 						continue;
 					}
 					
-					var val = -negamax(7, -10000, 10000, opponent);
+					var val = -negamax(MAX_DEPTH, -10000, 10000, opponent);
 					
 					undoColumn(i);
 					
