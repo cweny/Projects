@@ -1,442 +1,96 @@
-		$(document).ready(function(){
-			$("#show").click(function(){
-				$('#board').show();
-			});
-			var columnSize = 7;
-			var rowSize = 6;
-			var lastPlay = Math.floor(columnSize/2);
-			var sCols = function(play) {
-				var shuffled = [];
-				var t=1; 
-				var start = parseInt(play);
-				shuffled.push(start);
-				while (t+start<columnSize || start-t>=0) {
-					if(start-t>=0) {
-						shuffled.push(start-t);
-					}
-					if(start+t<columnSize) {
-						shuffled.push(start+t);
-					}
-					t++;
-				}
-				return shuffled;
-			};
-			var MAX_DEPTH = 5;
-			var shuffleCols = sCols(lastPlay);
-			var newBoard = function(){
-				var newB = [];
-				
-				for(var i=0; i<rowSize; i++){
-					var temp = [];
-					for(var n=0; n<columnSize; n++){
-						temp[n] = 0;
-					}
-					newB[i]=temp;
-				}
-				return newB;
-			};
-			var getWl = function() {
-				var wl = [];
-				//-
-				for(var r=0; r<rowSize; r++) {
-					for(var c=0; c<columnSize-3;c++) {
-						wl.push(
-							[{row:r, col:c},
-							{row:r, col:c+1},
-							{row:r, col:c+2},
-							{row:r, col:c+3}]
-						);
-					}
-				}
-				//|
-				for(var c=0; c<columnSize; c++) {
-					for(var r=0; r<rowSize-3;r++) {
-						wl.push(
-							[{row:r, col:c},
-							{row:r+1, col:c},
-							{row:r+2, col:c},
-							{row:r+3, col:c}]
-						);
-					}
-				}
-				// /
-				for(var r=0; r<rowSize-3; r++) {
-					for(var c=0; c<columnSize-3;c++) {
-						wl.push(
-							[{row:r, col:c},
-							{row:r+1, col:c+1},
-							{row:r+2, col:c+2},
-							{row:r+3, col:c+3}]
-						);
-					}
-				}
-				// \
+$(document).ready(function() {
+    $("#show").click(function() {
+        $('#board').show();
+    });
 
-				for(var r=0; r<rowSize-3; r++) {
-					for(var c=3; c<columnSize;c++) {
-						wl.push(
-							[{row:r, col:c},
-							{row:r+1, col:c-1},
-							{row:r+2, col:c-2},
-							{row:r+3, col:c-3}]
-						);
-					}
-				}
-				return wl;
-			};
-			var winningLines = getWl();
-			var board = newBoard();
-			var analyzeBoard = function(player) {
-				var combs = {four:[],
-							three:[],
-							two:[],
-							one:[]};
-				var opponent = 0;
-				if(player === 2) {
-					opponent = 1;
-				} else if(player === 1) {
-					opponent = 2;
-				}
-				for(var i in winningLines) {
-					var matches = 0;
-					var emptySlots = [];
-					for(var k in winningLines[i]) {
-						if(board[winningLines[i][k].row][winningLines[i][k].col] === player) {
-							matches++;
-						} else if(board[winningLines[i][k].row][winningLines[i][k].col] === opponent) {
-							matches = 0;
-							break;
-						} else if(board[winningLines[i][k].row][winningLines[i][k].col] === 0) {
-							emptySlots.push({row:winningLines[i][k].row, col:winningLines[i][k].col});
-						}
-					}
-					switch(matches) {
-						case 4:
-							combs.four.push(1);
-							break;
-						case 3:
-							var under = 0;
-							for(var t in emptySlots) {
-								if(emptySlots[t].row === rowSize-1 || board[emptySlots[t].row+1][emptySlots[t].col]!==0) {
-									under++;
-								}
-							}
-							combs.three.push(under);
-							break;
-						case 2:
-							var under = 0;
-							for(var t in emptySlots) {
-								if(emptySlots[t].row === rowSize-1 || board[emptySlots[t].row+1][emptySlots[t].col]!==0) {
-									under++;
-								}
-							}
-							combs.two.push(under);
-							break;
-						case 1:
-							var under = 0;
-							for(var t in emptySlots) {
-								if(emptySlots[t].row === rowSize-1 || board[emptySlots[t].row+1][emptySlots[t].col]!==0) {
-									under++;
-								}
-							}
-							combs.one.push(under);
-							break;
-					}
-				}
-				return combs;
-			};
-			var droppableColumn = function(col) {
-				var row = rowSize-1;
-				while(board[row][col] !== 0) {
-					row--;
-					if(row === -1) {
-						return row;
-					}
-				}
-				return row;
-			};
-			var undoColumn = function(col) {
-				var row = 0;
-				while(board[row][col] === 0) {
-					row++;
-					if(row === rowSize) {
-						console.log("error");
-						return;
-					}
-				}
-				
-				board[row][col]=0;
-			};
-			var setRed = function(){
-				this.style.backgroundColor = "red";
-			};
-			var setBlue = function(){
-				this.style.backgroundColor = "blue";
-			};
-			var setWhite = function(){
-				this.style.backgroundColor = "white";
-			};
-			var redTurn = true;
-			var checkWin = function(){
-				for(var row = 0; row<board.length; row++){
-					for(var col = 0; col<board[0].length; col++){
-						var player = board[row][col];
-						if(player === 0){
-							continue;
-						}
-						if (row+3 < board.length && board[row+1][col] === player && board[row+2][col] === player && board[row+3][col] === player) 
-							return player;
-						if (col+3 < board[0].length && board[row][col+1] === player && board[row][col+2] === player && board[row][col+3] === player) 
-							return player;
-						if ((row+3 < board.length && col+3 < board[0].length)
-							&& board[row+1][col+1] === player && board[row+2][col+2] === player && board[row+3][col+3] === player) 
-							return player;
-						if ((row-3 > 0 && col+3 < board[0].length)
-							&& board[row-1][col+1] === player && board[row-2][col+2] === player && board[row-3][col+3] === player) 
-							return player;
-					}
-				}
-				return 0;
-			};			
-			//Initialize game
-			for(var i=0; i<rowSize; i++) {
-				var row = document.createElement("TR");
-				row.className = "row";
-				row.id = "row"+i;
-				document.getElementById("board").appendChild(row);
-				for(var k=0; k<columnSize; k++) {
-					var slot = document.createElement("TD");
-					slot.id = k.toString();
-					slot.className = "slot";
-					slot.style.backgroundColor = "white";
-					$(".row").last().append(slot);
-				}
-			}
-			//$('#show').hide();
-			//Restart Game
-			$("#restart").click(function(){
-				board = newBoard();
-				$('.slot').css("background-color","white");
-				redTurn = true;
-				var rows = $(".row");
-				for (var i=0; i<rows.length; i++){
-					var slots = rows[i].childNodes;
-					for(var k=0; k<slots.length; k++){
-						slots[k].onmouseout = setWhite;
-					}
-				}
-				$('#board').show();
-				$('#player').text("Player Red Turn");
-			});
-			//Make a play
-			var drop = function(element, player){
-				var row = rowSize-1;
-				while(board[row][element.id] !== 0) {
-					row--;
-					if(row === -1) {
-						break;
-					}
-				}
-				if(row !== -1) {
-					if(redTurn){
-						board[row][element.id]=1;
-						$('#player').text("Player Blue Turn");
-					}else{
-						board[row][element.id]=2;
-						$('#player').text("Player Red Turn");
-					}
-					var slots = $(".row")[row].childNodes;
-					var x = slots[element.id];
-					if(redTurn){
-						x.style.backgroundColor = "red";
-						x.onmouseout = setRed;
-					}else{
-						x.style.backgroundColor = "blue";
-						x.onmouseout = setBlue;
-					}
-					
-					redTurn = !redTurn;
-				}
-				if(row>0 && player===1) {
-					row--;
-					var slots = $(".row")[row].childNodes;
-					var x = slots[element.id];
-					x.style.backgroundColor = "pink";
-				}
-				if(row!==-1) {
-					return true;
-				} else {
-					return false;
-				}
-			};
-			//AI
-			var eval = function(player) {
-				var lines = analyzeBoard(player);
-				var score = 0;
-				if(lines.four.length > 0) {
-					return 10000;
-				}
-				for(var n in lines.three) {
-					if( n > 0 ) {
-						if(lines.three[0]>0 &&lines.three[1]>0) {
-							score += 800;
-						} else {
-							score += 250;
-						}
-					} else {
-						score += 200;
-					}
-				}
-				for(var n in lines.two) {
-					score += 25*(lines.two[n]+1);
-				}
-				for(var n in lines.one) {
-					score += 5;
-				}
-				return score;
-			};
-			var evaluate = function(player,opponent) {
-				return eval(player);
-			};
-			var negamax = function(depth, alpha, beta, player) {
-				var opponent = 0;
-				if(player === 2) {
-					opponent = 1;
-				} else if(player === 1) {
-					opponent = 2;
-				}
-				var winner = checkWin();
-				
-				if(winner === player){
-					return 10000-(MAX_DEPTH-depth);
-				} else if(winner ===opponent) {
-					return -10000+(MAX_DEPTH-depth);
-				}
-				
-				if(depth === 0) {
-					return evaluate(player,opponent)-(MAX_DEPTH-depth);
-				}
-				var thisAlpha = alpha;
-				var i;
-				var m;
-				for(m in shuffleCols) {
-					i=shuffleCols[m];
-					var row = droppableColumn(i);
-					if(row >= 0) {
-						board[row][i] = player;
-					} else {
-						continue;
-					}
-					var val = -negamax(depth-1, -beta, -thisAlpha, opponent);
-					board[row][i] = 0;
-					if(val >= beta) {
-						return beta;
-					}
-					if(val>thisAlpha) {
-						thisAlpha = val;
-					}
-				}
-				return thisAlpha;
-			};
-			var pickMove = function(player){
-				var bestCol = 0;
-				var opponent = 0;
-				var alpha = -10000;
-				var beta = 10000;
-				
-				if(player === 2) {
-					opponent = 1;
-				} else if(player === 1) {
-					opponent = 2;
-				}
-				var i;
-				var m;
-				for(m in shuffleCols) {
-					i=shuffleCols[m];
-					var row = droppableColumn(i);
-					if(row >= 0) {
-						board[row][i] = player;
-					} else {
-						if(bestCol===i){
-							bestCol=shuffleCols[m+1];
-						}
-						continue;
-					}
-					
-					var val = -negamax(MAX_DEPTH, -beta, -alpha, opponent);
-					
-					board[row][i] = 0;
-					
-					if(val >= beta) {
-						return i;
-					}
-					if(val>alpha) {
-						alpha = val;
-						bestCol = i;
-					}
-				}
-				return bestCol;
-			};
-			var compMove = function(){
-				var col = pickMove(2);
-				var row = droppableColumn(col);
-				var slots = $(".row")[row].childNodes;
-				var element = slots[col];
-				drop(element,2);
-			};
-			//UI
-			$('.slot').click(function(){
-				if(drop(this,1)) {
-					shuffleCols = sCols(lastPlay);
-					var winner = checkWin();
-					if(winner!==0){
-						$('#board').hide();
-						if(winner === 1){
-							$('#player').text("Player Red Won");
-							return;
-						} else if(winner === 2){
-							$('#player').text("Player Blue Won");
-							return;
-						}
-					}
-					compMove();
-					winner = checkWin();
-					if(winner!==0){
-						$('#board').hide();
-						if(winner === 1)
-							$('#player').text("Player Red Won");
-						else if(winner === 2)
-							$('#player').text("Player Blue Won");
-					}
-				}
-			});
-			$(".slot").hover(function(){
-				$(this).css('cursor','pointer');
-				var row = rowSize-1;
-				while(board[row][this.id] !== 0) {
-					row--;
-					if(row === -1) {
-						break;
-					}
-				}
-				if(row!==-1) {
-					var slots = $(".row")[row].childNodes;
-					var x = slots[this.id];
-					x.style.backgroundColor = "pink";
-				}
-			  },
-			  function(){
-				var row = rowSize-1;
-				while(board[row][this.id] !== 0) {
-					row--;
-					if(row === -1) {
-						break;
-					}
-				}
-				if(row!==-1) {
-					var slots = $(".row")[row].childNodes;
-					var x = slots[this.id];
-					x.style.backgroundColor = "white";
-				}
-			});
+    lastPlay = Math.floor(columnSize / 2);
+    winningLines = getWl();
+    shuffleCols = sCols(lastPlay);
+    board = newBoard();
+    redTurn = true;
+
+    //Initialize game
+    for (var i = 0; i < rowSize; i++) {
+        var row = document.createElement("TR");
+        row.className = "row";
+        row.id = "row" + i;
+        document.getElementById("board").appendChild(row);
+        for (var k = 0; k < columnSize; k++) {
+            var slot = document.createElement("TD");
+            slot.id = k.toString();
+            slot.className = "slot";
+            slot.style.backgroundColor = "white";
+            $(".row").last().append(slot);
+        }
+    }
+    //Restart Game
+    $("#restart").click(function() {
+        board = newBoard();
+        $('.slot').css("background-color", "white");
+        redTurn = true;
+        var rows = $(".row");
+        for (var i = 0; i < rows.length; i++) {
+            var slots = rows[i].childNodes;
+            for (var k = 0; k < slots.length; k++) {
+                slots[k].onmouseout = setWhite;
+            }
+        }
+        $('#board').show();
+        $('#player').text("Player Red Turn");
+    });
+    //UI
+    $('.slot').click(function() {
+        if (drop(this, 1)) {
+            //lastPlay = this.id;
+            var winner = checkWin();
+            if (winner !== 0) {
+                $('#board').hide();
+                if (winner === 1) {
+                    $('#player').text("Player Red Won");
+                    return;
+                } else if (winner === 2) {
+                    $('#player').text("Player Blue Won");
+                    return;
+                }
+            }
+            compMove();
+            winner = checkWin();
+            if (winner !== 0) {
+                $('#board').hide();
+                if (winner === 1)
+                    $('#player').text("Player Red Won");
+                else if (winner === 2)
+                    $('#player').text("Player Blue Won");
+            }
+        }
+    });
+    $(".slot").hover(function() {
+            $(this).css('cursor', 'pointer');
+            var row = rowSize - 1;
+            while (board[row][this.id] !== 0) {
+                row--;
+                if (row === -1) {
+                    break;
+                }
+            }
+            if (row !== -1) {
+                var slots = $(".row")[row].childNodes;
+                var x = slots[this.id];
+                x.style.backgroundColor = "pink";
+            }
+        },
+        function() {
+            var row = rowSize - 1;
+            while (board[row][this.id] !== 0) {
+                row--;
+                if (row === -1) {
+                    break;
+                }
+            }
+            if (row !== -1) {
+                var slots = $(".row")[row].childNodes;
+                var x = slots[this.id];
+                x.style.backgroundColor = "white";
+            }
 		});
+});
