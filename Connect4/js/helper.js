@@ -14,7 +14,15 @@ var sCols = function(play) {
     }
     return shuffled;
 };
-
+var getOpponent = function(player) {
+	if(player == 1) {
+		return 2;
+	} else if(player ==2) {
+		return 1;
+	}
+	console.log("error");
+	return 0;
+}
 var newBoard = function() {
     var newB = [];
 
@@ -117,3 +125,35 @@ var drop = function(element, player) {
         return false;
     }
 };
+
+var updateBoardComb = function(player, col, row) {
+	var combs = {
+        four: [],
+        three: [],
+        two: [],
+        one: []
+    };
+	// |
+	for(var r = row; r < rowSize-1; r++) {
+		if(r > 2) {
+			var matches = 0;
+			var under = 0;
+			for(var r2 = r; r2 <= r-3; r2--) {
+				if(board[r2][col] === player) {
+					matches++;
+				} else if(board[r2][col] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(r2===rowSize-1 || board[r2 + 1][col] !== 0) {
+						under++;
+					}
+				}
+			}
+		}
+	}
+	// -
+	// \
+	// /
+	
+}

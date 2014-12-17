@@ -63,6 +63,7 @@ $(document).ready(function() {
                     $('#player').text("Player Blue Won");
             }
         }
+		console.log(board);
     });
     $(".slot").hover(function() {
             $(this).css('cursor', 'pointer');
