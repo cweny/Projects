@@ -91,12 +91,7 @@ var analyzeBoard = function(player) {
         two: [],
         one: []
     };
-    var opponent = 0;
-    if (player === 2) {
-        opponent = 1;
-    } else if (player === 1) {
-        opponent = 2;
-    }
+    var opponent = getOpponent(player);
     for (var i in winningLines) {
         var matches = 0;
         var emptySlots = [];
@@ -177,12 +172,7 @@ var evaluate = function(player, opponent) {
     return eval(player);
 };
 var negamax = function(depth, alpha, beta, player) {
-    var opponent = 0;
-    if (player === 2) {
-        opponent = 1;
-    } else if (player === 1) {
-        opponent = 2;
-    }
+    var opponent = getOpponent(player);
     var winner = checkWin();
 
     if (winner === player) {
@@ -219,15 +209,9 @@ var negamax = function(depth, alpha, beta, player) {
 };
 var pickMove = function(player) {
     var bestCol = 0;
-    var opponent = 0;
     var alpha = -10000;
     var beta = 10000;
-
-    if (player === 2) {
-        opponent = 1;
-    } else if (player === 1) {
-        opponent = 2;
-    }
+	var opponent = getOpponent(player);
     var i;
     var m;
     //shuffleCols = sCols(lastPlay);
