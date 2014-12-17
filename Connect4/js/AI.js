@@ -187,7 +187,7 @@ var negamax = function(depth, alpha, beta, player) {
     var thisAlpha = alpha;
     var i;
     var m;
-    //shuffleCols = sCols(Math.floor(columnSize/2));
+    var shuffleCols = sCols(lastPlay);
     for (m in shuffleCols) {
         i = shuffleCols[m];
         var row = droppableColumn(i);
@@ -196,6 +196,7 @@ var negamax = function(depth, alpha, beta, player) {
         } else {
             continue;
         }
+		lastPlay = i;
         var val = -negamax(depth - 1, -beta, -thisAlpha, opponent);
         board[row][i] = 0;
         if (val >= beta) {
@@ -214,7 +215,7 @@ var pickMove = function(player) {
 	var opponent = getOpponent(player);
     var i;
     var m;
-    //shuffleCols = sCols(lastPlay);
+    var shuffleCols = sCols(lastPlay);
     for (m in shuffleCols) {
         i = shuffleCols[m];
         var row = droppableColumn(i);
@@ -226,9 +227,8 @@ var pickMove = function(player) {
             }
             continue;
         }
-
+		lastPlay = i;
         var val = -negamax(MAX_DEPTH, -beta, -alpha, opponent);
-
         board[row][i] = 0;
 
         if (val >= beta) {

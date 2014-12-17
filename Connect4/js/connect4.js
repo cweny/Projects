@@ -39,9 +39,10 @@ $(document).ready(function() {
         $('#player').text("Player Red Turn");
     });
     //UI
+	var element = [];
     $('.slot').click(function() {
         if (drop(this, 1)) {
-            //lastPlay = this.id;
+            lastPlay = this.id;
             var winner = checkWin();
             if (winner !== 0) {
                 $('#board').hide();
@@ -62,8 +63,9 @@ $(document).ready(function() {
                 else if (winner === 2)
                     $('#player').text("Player Blue Won");
             }
+			
         }
-		console.log(board);
+		//console.log(board);
     });
     $(".slot").hover(function() {
             $(this).css('cursor', 'pointer');
