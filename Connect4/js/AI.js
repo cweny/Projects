@@ -230,7 +230,7 @@ var pickMove = function(player) {
 		lastPlay = i;
         var val = -negamax(MAX_DEPTH, -beta, -alpha, opponent);
         board[row][i] = 0;
-
+		console.log("col:"+i+"value:"+val);
         if (val >= beta) {
             return i;
         }

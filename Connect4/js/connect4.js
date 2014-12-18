@@ -39,7 +39,6 @@ $(document).ready(function() {
         $('#player').text("Player Red Turn");
     });
     //UI
-	var element = [];
     $('.slot').click(function() {
         if (drop(this, 1)) {
             lastPlay = this.id;

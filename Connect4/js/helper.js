@@ -125,8 +125,10 @@ var drop = function(element, player) {
         return false;
     }
 };
-
-var updateBoardComb = function(player, col, row) {
+var updateCombinations = function(before, after) {
+	
+}
+var getCombinations = function(player, col, row) {
 	var combs = {
         four: [],
         three: [],
@@ -134,11 +136,11 @@ var updateBoardComb = function(player, col, row) {
         one: []
     };
 	// |
-	for(var r = row; r < rowSize-1; r++) {
-		if(r > 2) {
+	for(var r = row; r <= row+3; r++) {
+		if(r > 2 && r < rowSize) {
 			var matches = 0;
 			var under = 0;
-			for(var r2 = r; r2 <= r-3; r2--) {
+			for(var r2 = r; r2 >= r-3; r2--) {
 				if(board[r2][col] === player) {
 					matches++;
 				} else if(board[r2][col] === getOpponent(player)) {
@@ -150,10 +152,124 @@ var updateBoardComb = function(player, col, row) {
 					}
 				}
 			}
+			switch(matches) {
+				case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			}
 		}
 	}
 	// -
-	// \
+	for(var c = col; c <= col+3; c++) {
+		if(c > 2 && c < columnSize) {
+			var matches = 0;
+			var under = 0;
+			for(var c2 = c; c2 >= c-3; c2--) {
+				if(board[row][c2] === player) {
+					matches++;
+				} else if(board[row][c2] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(row === rowSize-1 || board[row + 1][c2] !== 0) {
+						under++;
+					}
+				}
+			}
+			switch(matches) {
+				case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			}
+		}
+	}
+	// \	
+	var c,r;
+	for(c = col, r = row; c <= col+3; c++, r++) {
+		if(c > 2 && c < columnSize && r > 2 && r < rowSize) {
+			var matches = 0;
+			var under = 0;
+			var c2, r2;
+			for(c2 = c, r2 = r; c2 >= c-3; c2--, r2--) {
+				if(board[r2][c2] === player) {
+					matches++;
+				} else if(board[r2][c2] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(r2 === rowSize-1 || board[r2 + 1][c2] !== 0) {
+						under++;
+					}
+				}
+			}
+			switch(matches) {
+				case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			}
+		}
+	}
 	// /
+	for(c = col, r = row; c <= col+3; c++, r--) {
+		if(c > 2 && c < columnSize && r >= 0 && r < rowSize-3) {
+			var matches = 0;
+			var under = 0;
+			var c2, r2;
+			for(c2 = c, r2 = r; c2 >= c-3; c2--, r2++) {
+				if(board[r2][c2] === player) {
+					matches++;
+				} else if(board[r2][c2] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(r2 === rowSize-1 || board[r2 + 1][c2] !== 0) {
+						under++;
+					}
+				}
+			}
+			switch(matches) {
+				case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			}
+		}
+	}
 	
+	return combs;
 }
