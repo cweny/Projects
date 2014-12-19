@@ -114,8 +114,7 @@ var drop = function(element, player) {
         redTurn = !redTurn;
     }
     if (row > 0 && player === 1) {
-        row--;
-        var slots = $(".row")[row].childNodes;
+        var slots = $(".row")[row-1].childNodes;
         var x = slots[element.id];
         x.style.backgroundColor = "pink";
     }
@@ -125,8 +124,76 @@ var drop = function(element, player) {
         return false;
     }
 };
-var updateCombinations = function(before, after) {
+var compare = function(a1, a2) {
+	for (var i in a1) {
+		a2.splice(a2.indexOf(a1[i]),1);
+	}
+	return a2.length;
+}
+var deleteCombinations = function(addTo1, addTo2, deleteFromPlayer, player) {
+	boardComb1.three = addTo1.three.concat(boardComb1.three);
+	boardComb1.two = addTo1.two.concat(boardComb1.two);
+	boardComb1.one = addTo1.one.concat(boardComb1.one);
 	
+	boardComb2.three = addTo2.three.concat(boardComb2.three);
+	boardComb2.two = addTo2.two.concat(boardComb2.two);
+	boardComb2.one = addTo2.one.concat(boardComb2.one);
+	
+	if(player === 1) {
+		for(var i in deleteFromPlayer.three) {
+			boardComb1.three.splice(boardComb1.three.indexOf(deleteFromPlayer.three[i]), 1);
+		}
+		for(var i in deleteFromPlayer.two) {
+			boardComb1.two.splice(boardComb1.two.indexOf(deleteFromPlayer.two[i]), 1);
+		}
+		for(var i in deleteFromPlayer.one) {
+			boardComb1.one.splice(boardComb1.one.indexOf(deleteFromPlayer.one[i]), 1);
+		}
+	} else if(player === 2) {
+		for(var i in deleteFromPlayer.three) {
+			boardComb2.three.splice(boardComb2.three.indexOf(deleteFromPlayer.three[i]), 1);
+		}
+		for(var i in deleteFromPlayer.two) {
+			boardComb2.two.splice(boardComb2.two.indexOf(deleteFromPlayer.two[i]), 1);
+		}
+		for(var i in deleteFromPlayer.one) {
+			boardComb2.one.splice(boardComb2.one.indexOf(deleteFromPlayer.one[i]), 1);
+		}
+	} else {
+		console.log("error");
+	}
+}
+var addCombinations = function(deleteFrom1, deleteFrom2, addToPlayer, player) {
+	for(var i in deleteFrom1.three) {
+		boardComb1.three.splice(boardComb1.three.indexOf(deleteFrom1.three[i]), 1);
+	}
+	for(var i in deleteFrom1.two) {
+		boardComb1.two.splice(boardComb1.two.indexOf(deleteFrom1.two[i]), 1);
+	}
+	for(var i in deleteFrom1.one) {
+		boardComb1.one.splice(boardComb1.one.indexOf(deleteFrom1.one[i]), 1);
+	}
+	
+	for(var i in deleteFrom2.three) {
+		boardComb2.three.splice(boardComb2.three.indexOf(deleteFrom2.three[i]), 1);
+	}
+	for(var i in deleteFrom2.two) {
+		boardComb2.two.splice(boardComb2.two.indexOf(deleteFrom2.two[i]), 1);
+	}
+	for(var i in deleteFrom2.one) {
+		boardComb2.one.splice(boardComb2.one.indexOf(deleteFrom2.one[i]), 1);
+	}
+	if(player === 1) {
+		boardComb1.three = addToPlayer.three.concat(boardComb1.three);
+		boardComb1.two = addToPlayer.two.concat(boardComb1.two);
+		boardComb1.one = addToPlayer.one.concat(boardComb1.one);
+	} else if(player === 2) {
+		boardComb2.three = addToPlayer.three.concat(boardComb2.three);
+		boardComb2.two = addToPlayer.two.concat(boardComb2.two);
+		boardComb2.one = addToPlayer.one.concat(boardComb2.one);
+	} else {
+		console.log("error");
+	}
 }
 var getCombinations = function(player, col, row) {
 	var combs = {
@@ -153,7 +220,7 @@ var getCombinations = function(player, col, row) {
 				}
 			}
 			switch(matches) {
-				case 4:
+			case 4:
                 combs.four.push(1);
                 break;
             case 3:
@@ -165,6 +232,8 @@ var getCombinations = function(player, col, row) {
             case 1:
                 combs.one.push(under);
                 break;
+			case 0:
+				break;
 			}
 		}
 	}
@@ -186,7 +255,7 @@ var getCombinations = function(player, col, row) {
 				}
 			}
 			switch(matches) {
-				case 4:
+			case 4:
                 combs.four.push(1);
                 break;
             case 3:
@@ -198,6 +267,8 @@ var getCombinations = function(player, col, row) {
             case 1:
                 combs.one.push(under);
                 break;
+			case 0:
+				break;
 			}
 		}
 	}
@@ -221,7 +292,7 @@ var getCombinations = function(player, col, row) {
 				}
 			}
 			switch(matches) {
-				case 4:
+			case 4:
                 combs.four.push(1);
                 break;
             case 3:
@@ -233,6 +304,8 @@ var getCombinations = function(player, col, row) {
             case 1:
                 combs.one.push(under);
                 break;
+			case 0:
+				break;
 			}
 		}
 	}
@@ -255,7 +328,7 @@ var getCombinations = function(player, col, row) {
 				}
 			}
 			switch(matches) {
-				case 4:
+			case 4:
                 combs.four.push(1);
                 break;
             case 3:
@@ -267,9 +340,142 @@ var getCombinations = function(player, col, row) {
             case 1:
                 combs.one.push(under);
                 break;
+			case 0:
+				break;
 			}
 		}
 	}
 	
 	return combs;
+}
+var getuCombinations = function(player, col, row) {
+	var combs = {
+        four: [],
+        three: [],
+        two: [],
+        one: []
+    };
+	//-
+	for(var c = col; c <= col+3; c++) {
+		if(c > 2 && c < columnSize) {
+			var matches = 0;
+			var under = 0;
+			for(var c2 = c; c2 >= c-3; c2--) {
+				if(board[row][c2] === player) {
+					matches++;
+				} else if(board[row][c2] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(row === rowSize-1 || board[row + 1][c2] !== 0) {
+						under++;
+					}
+				}
+			}
+			switch(matches) {
+			case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			case 0:
+				break;
+			}
+		}
+	}
+	// \	
+	var c,r;
+	for(c = col, r = row; c <= col+3; c++, r++) {
+		if(c > 2 && c < columnSize && r > 2 && r < rowSize) {
+			var matches = 0;
+			var under = 0;
+			var c2, r2;
+			for(c2 = c, r2 = r; c2 >= c-3; c2--, r2--) {
+				if(board[r2][c2] === player) {
+					matches++;
+				} else if(board[r2][c2] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(r2 === rowSize-1 || board[r2 + 1][c2] !== 0) {
+						under++;
+					}
+				}
+			}
+			switch(matches) {
+			case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			case 0:
+				break;
+			}
+		}
+	}
+	// /
+	for(c = col, r = row; c <= col+3; c++, r--) {
+		if(c > 2 && c < columnSize && r >= 0 && r < rowSize-3) {
+			var matches = 0;
+			var under = 0;
+			var c2, r2;
+			for(c2 = c, r2 = r; c2 >= c-3; c2--, r2++) {
+				if(board[r2][c2] === player) {
+					matches++;
+				} else if(board[r2][c2] === getOpponent(player)) {
+					matches = 0;
+					break;
+				} else {
+					if(r2 === rowSize-1 || board[r2 + 1][c2] !== 0) {
+						under++;
+					}
+				}
+			}
+			switch(matches) {
+			case 4:
+                combs.four.push(1);
+                break;
+            case 3:
+                combs.three.push(under);
+                break;
+            case 2:
+                combs.two.push(under);
+                break;
+            case 1:
+                combs.one.push(under);
+                break;
+			case 0:
+				break;
+			}
+		}
+	}
+	
+	return combs;
+}
+var updateUnder = function(before1u, before2u, col,row) {
+	var newc = {
+		four: [],
+		three: [],
+		two: [],
+		one: []
+	};
+		
+	var after1u = getuCombinations(1, col, row-1);
+	var after2u = getuCombinations(2, col, row-1);
+	addCombinations(before1u,newc,after1u,1);
+	addCombinations(newc,before2u,after2u,2);
 }
