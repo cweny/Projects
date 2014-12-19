@@ -52,11 +52,6 @@ $(document).ready(function() {
     });
     //UI
     $('.slot').click(function() {
-		if(redTurn) {
-			var player = 1;
-		} else {
-			var player = 2;
-		}
 		var row = droppableColumn(this.id);
 		if(row < 0) return;
 		var col = this.id;
@@ -67,8 +62,8 @@ $(document).ready(function() {
 		var before1 = getCombinations(1, col, row);
 		var before2 = getCombinations(2, col, row);
         if (drop(this, 1)) {
-			var after = getCombinations(player, col, row);
-			addCombinations(before1,before2,after,player);
+			var after = getCombinations(1, col, row);
+			addCombinations(before1,before2,after,1);
 			if(row>0) {
 				updateUnder(before1u, before2u, col,row);
 			}
@@ -84,7 +79,7 @@ $(document).ready(function() {
                     return;
                 }
             }
-            //compMove();
+            compMove();
             winner = checkWin();
             if (winner !== 0) {
                 $('#board').hide();
@@ -93,7 +88,6 @@ $(document).ready(function() {
                 else if (winner === 2)
                     $('#player').text("Player Blue Won");
             }
-			
         }
     });
     $(".slot").hover(function() {

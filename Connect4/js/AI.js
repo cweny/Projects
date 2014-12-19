@@ -144,11 +144,16 @@ var analyzeBoard = function(player) {
     return combs;
 };
 var eval = function(player) {
-    var lines = analyzeBoard(player);
+    var lines;
+	if(player === 1) {
+		lines = boardComb1;
+	} else if (player === 2) {
+		lines = boardComb2;
+	}
     var score = 0;
-    if (lines.four.length > 0) {
+    /*if (lines.four.length > 0) {
         return 10000;
-    }
+    }*/
     for (var n in lines.three) {
         if (n > 0) {
             if (lines.three[0] > 0 && lines.three[1] > 0) {
@@ -192,13 +197,31 @@ var negamax = function(depth, alpha, beta, player) {
         i = shuffleCols[m];
         var row = droppableColumn(i);
         if (row >= 0) {
+			var temp1 = copy(boardComb1);
+			var temp2 = copy(boardComb2);
+			if(row > 0) {
+				var before1u = getuCombinations(1, i, row-1);
+				var before2u = getuCombinations(2, i, row-1);
+			}
+			var before1 = getCombinations(1, i, row);
+			var before2 = getCombinations(2, i, row);
+			
             board[row][i] = player;
-        } else {
+			
+			var after = getCombinations(2, i, row);
+			addCombinations(before1,before2,after,2);
+			if(row > 0) {
+				updateUnder(before1u, before2u, i,row);
+			}
+			
+		} else {
             continue;
         }
 		lastPlay = i;
         var val = -negamax(depth - 1, -beta, -thisAlpha, opponent);
         board[row][i] = 0;
+		boardComb1 = temp1;
+		boardComb2 = temp2;
         if (val >= beta) {
             return beta;
         }
@@ -220,7 +243,22 @@ var pickMove = function(player) {
         i = shuffleCols[m];
         var row = droppableColumn(i);
         if (row >= 0) {
+			var temp1 = copy(boardComb1);
+			var temp2 = copy(boardComb2);
+			if(row > 0) {
+				var before1u = getuCombinations(1, i, row-1);
+				var before2u = getuCombinations(2, i, row-1);
+			}
+			var before1 = getCombinations(1, i, row);
+			var before2 = getCombinations(2, i, row);
+			
             board[row][i] = player;
+			
+			var after = getCombinations(2, i, row);
+			addCombinations(before1,before2,after,2);
+			if(row > 0) {
+				updateUnder(before1u, before2u, i,row);
+			}
         } else {
             if (bestCol === i) {
                 bestCol = shuffleCols[m + 1];
@@ -230,7 +268,9 @@ var pickMove = function(player) {
 		lastPlay = i;
         var val = -negamax(MAX_DEPTH, -beta, -alpha, opponent);
         board[row][i] = 0;
-		console.log("col:"+i+"value:"+val);
+		boardComb1 = temp1;
+		boardComb2 = temp2;
+		//console.log("col:"+i+"value:"+val);
         if (val >= beta) {
             return i;
         }
@@ -246,5 +286,19 @@ var compMove = function() {
     var row = droppableColumn(col);
     var slots = $(".row")[row].childNodes;
     var element = slots[col];
+	if(row > 0) {
+		var before1u = getuCombinations(1, col, row-1);
+		var before2u = getuCombinations(2, col, row-1);
+	}
+	var before1 = getCombinations(1, col, row);
+	var before2 = getCombinations(2, col, row);
+	
     drop(element, 2);
+	
+	var after = getCombinations(2, col, row);
+	addCombinations(before1,before2,after,2);
+	
+	if(row > 0) {
+		updateUnder(before1u, before2u, col,row);
+	}
 };

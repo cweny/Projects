@@ -124,7 +124,7 @@ var drop = function(element, player) {
         return false;
     }
 };
-var compare = function(a1, a2) {
+var compare = function(a2, a1) {
 	for (var i in a1) {
 		a2.splice(a2.indexOf(a1[i]),1);
 	}
@@ -478,4 +478,11 @@ var updateUnder = function(before1u, before2u, col,row) {
 	var after2u = getuCombinations(2, col, row-1);
 	addCombinations(before1u,newc,after1u,1);
 	addCombinations(newc,before2u,after2u,2);
+}
+var copy = function(obj) {
+	var copy1 = {};
+		copy1.one = obj.one.slice(0);
+		copy1.two = obj.two.slice(0);
+		copy1.three = obj.three.slice(0);
+	return copy1
 }
