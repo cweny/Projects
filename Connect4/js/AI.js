@@ -1,6 +1,7 @@
+//Returns an array of winning combinations
 var getWl = function() {
     var wl = [];
-    //-
+    //- vertical combinations
     for (var r = 0; r < rowSize; r++) {
         for (var c = 0; c < columnSize - 3; c++) {
             wl.push(
@@ -20,7 +21,7 @@ var getWl = function() {
             );
         }
     }
-    //|
+    //| horizontal combinations
     for (var c = 0; c < columnSize; c++) {
         for (var r = 0; r < rowSize - 3; r++) {
             wl.push(
@@ -40,7 +41,7 @@ var getWl = function() {
             );
         }
     }
-    // /
+    // / diagonal combinations
     for (var r = 0; r < rowSize - 3; r++) {
         for (var c = 0; c < columnSize - 3; c++) {
             wl.push(
@@ -60,7 +61,7 @@ var getWl = function() {
             );
         }
     }
-    // \
+    // \diagonal combinations
 
     for (var r = 0; r < rowSize - 3; r++) {
         for (var c = 3; c < columnSize; c++) {
@@ -83,7 +84,10 @@ var getWl = function() {
     }
     return wl;
 };
-
+//returns an object containing the current possible winning combinations
+//according to the number of pieces each have.
+//Each array element has the number of empty slots in 
+//the winning combination that can be filled right away
 var analyzeBoard = function(player) {
     var combs = {
         four: [],
@@ -143,6 +147,7 @@ var analyzeBoard = function(player) {
     }
     return combs;
 };
+//Evaluate function for the AI
 var eval = function(player) {
     var lines;
 	if(player === 1) {
@@ -176,6 +181,7 @@ var eval = function(player) {
 var evaluate = function(player, opponent) {
     return eval(player);
 };
+//A recursive negamax algorithm with alpha beta prunning for the AI
 var negamax = function(depth, alpha, beta, player) {
     var opponent = getOpponent(player);
     var winner = checkWin();
@@ -231,6 +237,8 @@ var negamax = function(depth, alpha, beta, player) {
     }
     return thisAlpha;
 };
+//Parameter is the player's turn
+//Returns the best move possible as calculated by the negamax and evaluate algorithms
 var pickMove = function(player) {
     var bestCol = 0;
     var alpha = -10000;
@@ -281,6 +289,7 @@ var pickMove = function(player) {
     }
     return bestCol;
 };
+//Makes the computer move. Updates both board combinations to keep the analyzed board updated
 var compMove = function() {
     var col = pickMove(2);
     var row = droppableColumn(col);

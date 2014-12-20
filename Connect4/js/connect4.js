@@ -2,14 +2,12 @@ $(document).ready(function() {
     $("#show").click(function() {
         $('#board').show();
     });
-
+	//Initialize Game
     lastPlay = Math.floor(columnSize / 2);
     winningLines = getWl();
     shuffleCols = sCols(lastPlay);
     board = newBoard();
     redTurn = true;
-
-    //Initialize game
     for (var i = 0; i < rowSize; i++) {
         var row = document.createElement("TR");
         row.className = "row";
@@ -50,7 +48,7 @@ $(document).ready(function() {
         $('#board').show();
         $('#player').text("Player Red Turn");
     });
-    //UI
+    //UI. Takes care of taking the user;s play and updating the board combinations for the AI to use
     $('.slot').click(function() {
 		var row = droppableColumn(this.id);
 		if(row < 0) return;
