@@ -1,3 +1,4 @@
+//Shuffles the columns to evaluate depending on the input
 var sCols = function(play) {
     var shuffled = [];
     var t = 1;
@@ -14,6 +15,7 @@ var sCols = function(play) {
     }
     return shuffled;
 };
+//returns the opponent of the inputed player
 var getOpponent = function(player) {
 	if(player == 1) {
 		return 2;
@@ -23,6 +25,7 @@ var getOpponent = function(player) {
 	console.log("error");
 	return 0;
 }
+//returns an empty board with no pieces
 var newBoard = function() {
     var newB = [];
 
@@ -35,6 +38,7 @@ var newBoard = function() {
     }
     return newB;
 };
+//Returns the row where a piece can be dropped. -1 if no piece can be dropped at the specified column
 var droppableColumn = function(col) {
     var row = rowSize - 1;
     while (board[row][col] !== 0) {
@@ -45,6 +49,7 @@ var droppableColumn = function(col) {
     }
     return row;
 };
+//Deletes the last play made in the column specified
 var undoColumn = function(col) {
     var row = 0;
     while (board[row][col] === 0) {
@@ -57,15 +62,19 @@ var undoColumn = function(col) {
 
     board[row][col] = 0;
 };
+//set background of element to red
 var setRed = function() {
     this.style.backgroundColor = "red";
 };
+//set background of element to blue
 var setBlue = function() {
     this.style.backgroundColor = "blue";
 };
+//set background of element to white
 var setWhite = function() {
     this.style.backgroundColor = "white";
 };
+//return the winner. 0 if there is no winner
 var checkWin = function() {
     for (var row = 0; row < board.length; row++) {
         for (var col = 0; col < board[0].length; col++) {
@@ -85,6 +94,7 @@ var checkWin = function() {
     }
     return 0;
 };
+//Drop a piece in the specified element
 var drop = function(element, player) {
     var row = rowSize - 1;
     while (board[row][element.id] !== 0) {
@@ -130,6 +140,7 @@ var compare = function(a2, a1) {
 	}
 	return a2.length;
 }
+//Delete array of elements from specified player combinations and add array of elements
 var deleteCombinations = function(addTo1, addTo2, deleteFromPlayer, player) {
 	boardComb1.three = addTo1.three.concat(boardComb1.three);
 	boardComb1.two = addTo1.two.concat(boardComb1.two);
@@ -163,6 +174,7 @@ var deleteCombinations = function(addTo1, addTo2, deleteFromPlayer, player) {
 		console.log("error");
 	}
 }
+//Add specified array of elements and delete elements from board combinations
 var addCombinations = function(deleteFrom1, deleteFrom2, addToPlayer, player) {
 	for(var i in deleteFrom1.three) {
 		boardComb1.three.splice(boardComb1.three.indexOf(deleteFrom1.three[i]), 1);
@@ -195,6 +207,7 @@ var addCombinations = function(deleteFrom1, deleteFrom2, addToPlayer, player) {
 		console.log("error");
 	}
 }
+//Get current possible winning combinations with at least one piece on it
 var getCombinations = function(player, col, row) {
 	var combs = {
         four: [],
@@ -348,6 +361,7 @@ var getCombinations = function(player, col, row) {
 	
 	return combs;
 }
+//get combinations to change the "under" factor of evaluation
 var getuCombinations = function(player, col, row) {
 	var combs = {
         four: [],
@@ -466,6 +480,7 @@ var getuCombinations = function(player, col, row) {
 	
 	return combs;
 }
+//Update "under" factor of combinations
 var updateUnder = function(before1u, before2u, col,row) {
 	var newc = {
 		four: [],
@@ -479,6 +494,7 @@ var updateUnder = function(before1u, before2u, col,row) {
 	addCombinations(before1u,newc,after1u,1);
 	addCombinations(newc,before2u,after2u,2);
 }
+//make a copy of the object
 var copy = function(obj) {
 	var copy1 = {};
 		copy1.one = obj.one.slice(0);
